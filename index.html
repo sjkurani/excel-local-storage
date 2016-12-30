@@ -64,12 +64,28 @@
 				font-size: 15px;
 				color: green;
 			}
+			#mySubmit {
+			    text-align: right;
+			    font-size: 20px;
+			    width: 150px;
+			    height: 40px;
+			}
+			#mySubmit:hover {
+				background: #fff;
+			}
+			#rightdiv {
+				text-align: right;
+			}
 	</style>
 	
 </head>
 <body>
 	<div id="spreadsheet">
 		<h2>Title:<input type="text" id="Mytitle" name="input-title" placeholder="Enter Title here"><span id="msg"></span></h2>
+		
+		<form>
+			<h2><div id="rightdiv"><input id="mySubmit" type="submit" name="" value="Clear All Data" onclick="localStorage.clear()"></div></h2>	
+		</form>
 		<table id="mytable">
 			
 		</table>
@@ -77,19 +93,19 @@
 
 	<script type="text/javascript">
 
-		var cols = 26;
+		var cols = 27;
 		var rows = 50;
 
 
 		//Create table elements and append with proper title and row number.
-		for (var i = 0; i < rows + 1; i++) {
+		for (var i = 0; i < rows; i++) {
 				var tr = document.createElement("tr");
 				tr.className = "tr";
 				tr.id = i;
 				document.getElementById('mytable').appendChild(tr);
 				temp_id = i;
 
-			for (var j = 0; j < cols + 1; j++) {
+			for (var j = 0; j < cols; j++) {
 				var td = document.createElement("td");
 				td.className = "td";
 				tr.appendChild(td);
@@ -136,6 +152,7 @@
 	//localStorage.clear();
 	var globalArray = [];
 	document.addEventListener('DOMContentLoaded', function() {
+
 		console.log(localStorage);
 		//Add stored data to inputs.
 		//Title.
