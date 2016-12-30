@@ -77,19 +77,19 @@
 
 	<script type="text/javascript">
 
-		var cols = 27;
+		var cols = 26;
 		var rows = 50;
 
 
 		//Create table elements and append with proper title and row number.
-		for (var i = 0; i < rows; i++) {
+		for (var i = 0; i < rows + 1; i++) {
 				var tr = document.createElement("tr");
 				tr.className = "tr";
 				tr.id = i;
 				document.getElementById('mytable').appendChild(tr);
 				temp_id = i;
 
-			for (var j = 0; j < cols; j++) {
+			for (var j = 0; j < cols + 1; j++) {
 				var td = document.createElement("td");
 				td.className = "td";
 				tr.appendChild(td);
