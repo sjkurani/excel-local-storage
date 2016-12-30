@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<head>
+	<title>Excel Sheet</title>
+	<style type="text/css">
+			html , body {
+				background: #f1f1f1;
+			}
+			table {
+			    border-collapse: collapse;
+			}
+			td {
+			    border: 1px solid lightgray;
+			    padding: 0;
+			    margin: 0;
+			}
+
+			tr:first-child td, td:first-child {
+			    background-color: whitesmoke;
+			    text-align: center;
+			    border-color: darkgray;
+			    padding: 1px 3px;
+			}
+			tr:first-child td:hover, td:first-child:hover {
+			    background-color: lightgray;
+			    color: darkgreen;
+			    border-bottom: 3px solid darkgreen;
+			    cursor: pointer;
+			}
+			input {
+			    text-align: left;
+			    border: none;
+			    height: 22px;
+			    width: 100px;
+			    font-size: 14px;
+			}
+
+			input:hover {
+			    border: solid;
+			    border-width: 2px;
+			    border-color: darkgreen;
+			    cursor: default;
+			}
+
+			input:focus {
+			    text-align: left;
+			    border: solid;
+			    border-color: darkgreen;
+			    border-width: 2px;
+			    outline: none;
+			}
+			#Mytitle {
+				width: 50%;
+				text-align: left;
+				height: 40px;
+				font-size: 20px;
+				border-radius: 5px;
+				margin: 1%;
+				font-weight:bold;
+				border: 12px solid #fff;
+			}
+			#msg {
+				font-size: 15px;
+				color: green;
+			}
+	</style>
+	
+</head>
+<body>
+	<div id="spreadsheet">
+		<h2>Title:<input type="text" id="Mytitle" name="input-title" placeholder="Enter Title here"><span id="msg"></span></h2>
+		<table id="mytable">
+			
+		</table>
+	</div>
+
+	<script type="text/javascript">
+
+		var cols = 27;
+		var rows = 50;
+
+
+		//Create table elements and append with proper title and row number.
+		for (var i = 0; i < rows; i++) {
+				var tr = document.createElement("tr");
+				tr.className = "tr";
+				tr.id = i;
+				document.getElementById('mytable').appendChild(tr);
+				temp_id = i;
+
+			for (var j = 0; j < cols; j++) {
+				var td = document.createElement("td");
+				td.className = "td";
+				tr.appendChild(td);
+
+				if (i == 0 && j == 0 ) {
+					/*Leave blank*/
+				}
+				else if(i == 0) {
+					var newDiv = document.createElement("div"); 
+					var newContent = document.createTextNode(String.fromCharCode(65 + j - 1)); 
+					//after 26
+					newDiv.appendChild(newContent);
+
+					newDiv.className = "col-title";
+					newDiv.id = ""+ i + j;
+					td.appendChild(newDiv);
+
+				}
+				else if(j == 0) {
+					var newDiv = document.createElement("div"); 
+					var newContent = document.createTextNode(i);
+					newDiv.appendChild(newContent);
+
+					newDiv.className = "row-title";
+					newDiv.id = ""+ i + j;
+					newDiv.value = String.fromCharCode(65 + j - 1);
+					td.appendChild(newDiv);
+				}
+				else {
+					var input = document.createElement("input");
+					input.type = "text";
+					input.className = "inputs";
+					input.id = ""+ i + j;
+					td.appendChild(input);
+				}
+			}
+		}
+	</script>
+
+</body>
+<script type="text/javascript">
+	//On Load of the complete page.
+
+	//localStorage.clear();
+	var globalArray = [];
+	document.addEventListener('DOMContentLoaded', function() {
+		console.log(localStorage);
+		//Add stored data to inputs.
+		//Title.
+			if(localStorage.mytitle) {
+				document.getElementById('Mytitle').value = localStorage.mytitle;
+			}
+
+		//Column values.
+			if(localStorage.myValues) {
+				var storedobjs = JSON.parse(localStorage.getItem("myValues"));
+					for(var key in storedobjs) {
+						document.getElementById(storedobjs[key].id).value = storedobjs[key].value;
+
+    					var obj = {'id' : storedobjs[key].id,'value' : storedobjs[key].value};
+			    		globalArray.push(obj);
+					}
+			}
+
+		//Save title to localstorage.
+		document.getElementById('Mytitle').onblur = function() {
+			if(localStorage.mytitle) {
+				if(localStorage.mytitle != this.value) {
+			  		localStorage.setItem('mytitle',this.value);
+			  		document.getElementById("msg").innerHTML = "Title Updated";
+			  		setTimeout(hidemsg, 3000);
+				}
+			}
+			else {
+			  document.getElementById("msg").innerHTML = "Title Added";
+			  		setTimeout(hidemsg, 3000);
+			  localStorage.setItem('mytitle',this.value);
+			}
+		}
+		//Save input to localstorage
+		var elements = document.getElementsByClassName('inputs')
+		for (var i = 0; i < elements.length; i++) {
+		    elements[i].addEventListener('blur', function() {
+		    	if(this.value.trim()) {
+		    		if (globalArray.length > 0) {
+		    			//check is same id needed to be updated.
+		    			var exist = 0;
+		    			for (var i = 0; i < globalArray.length; i++) {
+		    				if(this.id == globalArray[i].id ) {
+		    					exist = 1;
+		    					globalArray[i].id = this.id;
+		    					globalArray[i].value = this.value;
+								document.getElementById("msg").innerHTML = "Value Updated";
+			  					setTimeout(hidemsg, 3000);
+		    				}
+		    			}
+	    				if(exist == 0) {
+	    					var obj = {'id' : this.id,value : this.value};
+				    		globalArray.push(obj);
+							document.getElementById("msg").innerHTML = "Value Added to sheet";
+			  				setTimeout(hidemsg, 3000);
+	    				}
+					}
+					else {
+    					var obj = {'id' : this.id,value : this.value};
+			    		globalArray.push(obj);
+					    document.getElementById("msg").innerHTML = "Value Added to sheet";
+			  			setTimeout(hidemsg, 3000);
+					}
+		    	}
+		    	localStorage.setItem("myValues",JSON.stringify(globalArray));		    	
+		    }, false);
+		}
+	});
+	function hidemsg() {
+			  		document.getElementById("msg").innerHTML = "";
+}
+	</script>
+</html>
